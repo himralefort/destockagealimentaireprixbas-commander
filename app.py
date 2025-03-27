@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from datetime import datetime
 import logging
-
+import os 
 # Initialisation de l'application Flask
 app = Flask(__name__)
 app.secret_key = 'a0365944c4029819074695803944e2f2b05f0c17f10fa575eab73911fd885b83:'  # Clé secrète pour les sessions
