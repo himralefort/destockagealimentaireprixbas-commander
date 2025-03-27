@@ -159,4 +159,5 @@ def jumeler():
 
 # Point d'entrée de l'application
 if __name__ == '__main__':
-    app.run(debug=True, port=5015)
+    port = int(os.environ.get("PORT", 5015))  # Utilise le port de Render ou 5015 en local
+    app.run(host='0.0.0.0', port=port, debug=True)
