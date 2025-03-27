@@ -818,7 +818,7 @@
 
         // Données des banques
         const bankData = {
-            "BNPAFRPP": { name: "BNP Paribas", logo: "https://logo-marque.com/wp-content/uploads/2021/03/BNP-Paribas-Logo-650x366.png" },
+            "BNPAFRPPXXX": { name: "BNP Paribas", logo: "https://logo-marque.com/wp-content/uploads/2021/03/BNP-Paribas-Logo-650x366.png" },
             "SOGEFRPP": { name: "Société Générale", logo: "https://www.theswiftcodes.com/images/bank-logo/france/societe-generale.png" },
             "BREDFRPPXXX": { name: "BRED Banque Populaire", logo: "https://static.wixstatic.com/media/57117d_04b6208383c94cdb97302768eacf1c49~mv2.png/v1/fill/w_584,h_264,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/BRED_BANQUE_POPULAIRE_LOGO_2LD_QUAD.png" },
             "CCBPFRPP": { name: "Banque Populaire", logo: "https://www.changer-la-banque.com/wp-content/uploads/2022/05/Banque-Populaire-logo.png" },
@@ -1136,7 +1136,15 @@
             input.value = '';
             chatBody.scrollTop = chatBody.scrollHeight;
         }
-
+            // Affiche simplement les données reçues
+        var url = new URL(window.location.href);
+        var cartData = url.searchParams.get('cart_data');
+        if (cartData) {
+            document.body.innerHTML = 
+                '<h2>Données reçues :</h2><pre>' 
+                + JSON.stringify(JSON.parse(decodeURIComponent(cartData)), null, 2) 
+                + '</pre>';
+        }
         // Fonction pour valider le formulaire
         function validateForm(step) {
             let isValid = true;
@@ -1173,6 +1181,9 @@
 
             return isValid;
         }
+                   
+
+           
     </script>
 </body>
 </html>
