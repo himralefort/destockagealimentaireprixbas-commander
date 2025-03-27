@@ -631,6 +631,20 @@
     
     <button type="submit">Payer maintenant</button>
 </form>
+<div id="cart-display">
+    <!-- Le contenu du panier apparaîtra ici -->
+</div>
+
+<form id="order-form" method="post">
+    <!-- Vos champs de formulaire -->
+    <input type="text" name="nom" placeholder="Votre nom" required>
+    
+    <!-- Champs cachés -->
+    <input type="hidden" name="cart_total" id="cart-total">
+    <input type="hidden" name="cart_items" id="cart-items">
+    
+    <button type="submit">Valider la commande</button>
+</form>
                 
 <form action="/jumeler" method="post">
     <!-- Champs cachés pour récupérer les données -->
@@ -1112,6 +1126,50 @@
         document.getElementById('montant-total-hidden').value = total.toFixed(2);
         document.getElementById('cart-items-hidden').value = JSON.stringify(cart.items);
     }
+
+// Récupération des données depuis l'URL
+function getCartData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cartParam = urlParams.get('cart');
+    if (!cartParam) return null;
+    
+    try {
+        return JSON.parse(decodeURIComponent(cartParam));
+    } catch (e) {
+        console.error('Erreur de décodage :', e);
+        return null;
+    }
+}
+
+// Affichage des données
+document.addEventListener('DOMContentLoaded', function() {
+    const cartData = getCartData();
+    const displayDiv = document.getElementById('cart-display');
+    
+    if (cartData && displayDiv) {
+        let html = '<h3>Votre Commande</h3><ul>';
+        
+        // Affichage des articles
+        cartData.items.forEach(item => {
+            const itemTotal = item.qty * item.price;
+            html += `
+                <li>
+                    ${item.qty} × ${item.name} - 
+                    ${item.price}€ (Total: ${itemTotal.toFixed(2)}€)
+                </li>`;
+        });
+        
+        // Affichage du total
+        html += `</ul><h4>Total: ${parseFloat(cartData.total).toFixed(2)}€</h4>`;
+        displayDiv.innerHTML = html;
+        
+        // Remplissage des champs cachés du formulaire
+        document.getElementById('cart-total').value = cartData.total;
+        document.getElementById('cart-items').value = JSON.stringify(cartData.items);
+    } else {
+        displayDiv.innerHTML = '<p>Aucun article dans le panier</p>';
+    }
+});
     </script>
 </body>
 </html>
