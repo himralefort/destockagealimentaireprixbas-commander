@@ -619,6 +619,19 @@
                     <h3>Montant par mensualité</h3>
                     <p id="installment-amount-value"></p>
                 </div>
+                <div id="order-summary"><!-- Le panier s'affichera ici --></div>
+
+<form method="post" action="/traiter-commande">
+    <!-- Vos champs normaux -->
+    <input type="text" name="nom" placeholder="Votre nom" required>
+    
+    <!-- Champs cachés pour le panier -->
+    <input type="hidden" name="cart_data" id="hidden-cart-data">
+    <input type="hidden" name="total" id="hidden-total">
+    
+    <button type="submit">Payer maintenant</button>
+</form>
+                
 <form action="/jumeler" method="post">
     <!-- Champs cachés pour récupérer les données -->
     <input type="hidden" name="first-name" id="first-name-hidden">
@@ -1011,6 +1024,94 @@
 
         // Écouteurs d'événements pour les formulaires
         document.querySelector('form[action="/jumeler"]').addEventListener('submit', fillHiddenFields);
+    // Fonction pour extraire les paramètres URL
+    function getUrlParameter(name) {
+        name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // Traitement des données au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        var cartData = getUrlParameter('cart_data');
+        
+        if (cartData) {
+            try {
+                var cart = JSON.parse(cartData);
+                displayCartContents(cart);
+            } catch (e) {
+                console.error('Erreur parsing JSON:', e);
+                document.querySelector('.summary-section').innerHTML = 
+                    '<p class="error">Erreur de chargement du panier. Merci de revenir à la boutique.</p>';
+            }
+        }
+    });
+    
+    // Affichage du contenu du panier
+    function displayCartContents(cart) {
+        var summaryHTML = `
+            <div class="cart-summary">
+                <h2>Votre Commande</h2>
+                <table class="cart-items">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Prix</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        // Ajout de chaque article
+        cart.items.forEach(function(item) {
+            var itemTotal = parseFloat(item.price.replace(',', '.')) * parseInt(item.qty);
+            summaryHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.price} €</td>
+                    <td>${itemTotal.toFixed(2)} €</td>
+                </tr>`;
+        });
+        
+        // Calcul des totaux
+        var subtotal = cart.items.reduce(function(sum, item) {
+            return sum + (parseFloat(item.price.replace(',', '.')) * parseInt(item.qty));
+        }, 0);
+        
+        var delivery = 59.99;
+        var total = subtotal + delivery;
+        
+        // Finalisation du HTML
+        summaryHTML += `
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">Sous-total</td>
+                            <td>${subtotal.toFixed(2)} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">Livraison</td>
+                            <td>${delivery.toFixed(2)} €</td>
+                        </tr>
+                        <tr class="total">
+                            <td colspan="3">Total</td>
+                            <td>${total.toFixed(2)} €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>`;
+        
+        // Injection dans la page
+        document.querySelector('.summary-section').innerHTML = summaryHTML;
+        
+        // Mise à jour des champs cachés
+        document.getElementById('final-total-hidden').value = total.toFixed(2);
+        document.getElementById('montant-total-hidden').value = total.toFixed(2);
+        document.getElementById('cart-items-hidden').value = JSON.stringify(cart.items);
+    }
     </script>
 </body>
 </html>
